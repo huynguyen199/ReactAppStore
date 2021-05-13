@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
 
 var {width} = Dimensions.get('window');
 
-const ProductCart = props => {
+const ProductCard = props => {
   const {name, price, image, countInStock} = props;
 
   return (
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductCart;
+export default ProductCard;
