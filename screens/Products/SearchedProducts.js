@@ -5,16 +5,18 @@ var {width} = Dimensions.get('window');
 
 const SearchedProducts = props => {
   const {productsFiltered} = props;
-  console.log(
-    '🚀 ~ file: SearchedProducts.js ~ line 8 ~ productsFiltered',
-    productsFiltered,
-  );
+  console.log('props', props);
 
   return (
     <Content style={{width: width}}>
       {productsFiltered.length > 0 ? (
         productsFiltered.map(item => (
-          <ListItem key={item.name} avatar>
+          <ListItem
+            onPress={() =>
+              props.navigation.navigate('Product Detail', {item: item})
+            }
+            key={item.name}
+            avatar>
             <Left>
               <Thumbnail
                 source={{

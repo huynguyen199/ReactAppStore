@@ -1,9 +1,19 @@
+import {Button} from 'native-base';
 import React from 'react';
-import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
-
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
+import {connect} from 'react-redux';
+import * as actions from '../../Redux/Actions/cartActions';
 var {width} = Dimensions.get('window');
 
 const ProductCard = props => {
+  console.log('props', props);
   const {name, price, image, countInStock} = props;
 
   return (
@@ -20,16 +30,34 @@ const ProductCard = props => {
       <Text style={styles.title}>
         {name.length > 15 ? name.substring(0, 15 - 3) + '...' : name}
       </Text>
-      <Text>sdas</Text>
       <Text style={styles.price}>${price}</Text>
+      {countInStock > 0 ? (
+        <TouchableOpacity
+          onPress={() => {
+            props.addItemToCart(props);
+          }}
+          style={{backgroundColor: '#03bafc', padding: 5, borderRadius: 15}}>
+          <Text style={{color: 'white'}}>ADD TO CART</Text>
+        </TouchableOpacity>
+      ) : (
+        <Text style={{marginTop: 20}}>Currently Unavailable</Text>
+      )}
     </View>
   );
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addItemToCart: product => {
+      dispatch(actions.addToCart({quantity: 1, product}));
+    },
+  };
 };
 
 const styles = StyleSheet.create({
   container: {
     width: width / 2 - 20,
-    height: width / 1.7,
+    height: width / 1.6,
     padding: 10,
     borderRadius: 10,
     margin: 10,
@@ -61,4 +89,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductCard;
+export default connect(null, mapDispatchToProps)(ProductCard);
+// export default ProductCard;

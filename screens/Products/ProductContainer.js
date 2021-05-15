@@ -6,6 +6,8 @@ import {
   ScrollView,
   FlatList,
   SafeAreaView,
+  StyleSheet,
+  Dimensions,
 } from 'react-native';
 import ProductList from './ProductList';
 import {Container, Header, Item, Input, Icon, Text} from 'native-base';
@@ -15,26 +17,29 @@ import CategoryFilter from './CategoryFilter';
 
 const data = require('../../assets/data/products.json');
 const ProductCategories = require('../../assets/data/categories.json');
+var {width, height} = Dimensions.get('window');
 
-const ProductContainer = () => {
+const ProductContainer = props => {
   const [products, setProducts] = useState([]);
   const [productsFiltered, setProductsFiltered] = useState([]);
   const [focus, setFocus] = useState();
   const [categories, setCategories] = useState([]);
-  const [productsCtg, setProductsCtg] = useState();
+  const [productsCtg, setProductsCtg] = useState([]);
   const [active, setActive] = useState();
 
-  const [initialState, setInitialState] = useState();
+  const [initialState, setInitialState] = useState([]);
 
   useEffect(() => {
     setProducts(data);
+    setProductsCtg(data);
+    setInitialState(data);
     setProductsFiltered(data);
     setFocus(false);
     setActive(-1);
     setCategories(ProductCategories);
     return () => {
-      console.log('return effect');
       setProducts([]);
+      setProductsCtg([]);
       setProductsFiltered([]);
       setFocus();
       setCategories([]);
@@ -61,10 +66,14 @@ const ProductContainer = () => {
 
   //Categories dang loi
   const changeCtg = ctg => {
+    console.log('ctg', ctg);
     {
       ctg === 'all'
-        ? [setProductsCtg(initialState), setActive(true)]
-        : [setProductsCtg(i => i.category._id === ctg, setActive(true))];
+        ? [setProductsCtg(initialState), setActive(-1)]
+        : [
+            setProductsCtg(i => products.filter(i => i.category.$oid === ctg)),
+            setActive(true),
+          ];
     }
   };
 
@@ -84,9 +93,12 @@ const ProductContainer = () => {
         </Item>
       </Header>
       {focus == true ? (
-        <SearchedProducts productsFiltered={productsFiltered} />
+        <SearchedProducts
+          navigation={props.navigation}
+          productsFiltered={productsFiltered}
+        />
       ) : (
-        <ScrollView>
+        <ScrollView nestedScrollEnabled>
           <View>
             <Banner />
           </View>
@@ -99,16 +111,37 @@ const ProductContainer = () => {
               setActive={setActive}
             />
           </View>
-          <FlatList
-            numColumns={2}
-            data={products}
-            renderItem={({item}) => <ProductList key={item.id} item={item} />}
-            keyExtractor={item => item.name}
-          />
+          {productsCtg.length > 0 ? (
+            <View>
+              <FlatList
+                numColumns={2}
+                data={productsCtg}
+                renderItem={({item}) => (
+                  <ProductList
+                    navigation={props.navigation}
+                    key={item._id}
+                    item={item}
+                  />
+                )}
+                keyExtractor={item => item.name}
+              />
+            </View>
+          ) : (
+            <View style={[styles.center, {height: height / 2}]}>
+              <Text>No Products Found</Text>
+            </View>
+          )}
         </ScrollView>
       )}
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default ProductContainer;
