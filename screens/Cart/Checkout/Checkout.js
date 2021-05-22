@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Text, View, Button, Dimensions} from 'react-native';
 import {Item, Toast, Container, Form, Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -6,12 +6,11 @@ import Input from '../../../Shared/Form/Input';
 import FormContainer from '../../../Shared/Form/FormContainer';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {connect} from 'react-redux';
+import AuthGlobal from '../../../Context/store/AuthGlobal';
 const countries = require('../../../assets/countries.json');
 var {width} = Dimensions.get('window');
-
 const Checkout = props => {
-  console.log('🚀 ~ file: Checkout.js ~ line 12 ~ props', props);
-
+  const context = useContext(AuthGlobal);
   const [orderItems, setOrderItems] = useState();
   const [address, setAddress] = useState();
   const [address2, setAddress2] = useState();
@@ -23,6 +22,20 @@ const Checkout = props => {
 
   useEffect(() => {
     setOrderItems(props.cartItems);
+
+    if (context.stateUser.isAuthenticated) {
+      console.log(context);
+      setUser(context.stateUser.user.userId);
+    } else {
+      props.navigation.navigate('Cart');
+      Toast.show({
+        topOffset: 60,
+        type: 'error',
+        text1: 'Please Login to Checkout',
+        text2: '',
+      });
+    }
+
     return () => {
       setOrderItems();
     };
@@ -84,18 +97,19 @@ const Checkout = props => {
           keyboardType={'numeric'}
           onChangeText={text => setZip(text)}
         />
-
-        <Picker
-          // mode="dropdown"
-          // note={false}
-          style={{width: 120, height: 50}}
-          // iosIcon={<Icon name="arrow-down" color={'#007aff'} />}
-          selectedValue={country}
-          onValueChange={e => setCountry(e)}>
-          {countries.map(c => {
-            return <Picker.Item key={c.code} label={c.name} value={c.name} />;
-          })}
-        </Picker>
+        <Item picker style={{width: 120}}>
+          <Picker
+            // mode="dropdown"
+            // note={false}
+            style={{height: 50}}
+            // iosIcon={<Icon name="arrow-down" color={'#007aff'} />}
+            selectedValue={country}
+            onValueChange={e => setCountry(e)}>
+            {countries.map(c => {
+              return <Picker.Item key={c.code} label={c.name} value={c.name} />;
+            })}
+          </Picker>
+        </Item>
         <View style={{width: '80%', alignItems: 'center'}}>
           <Button title="Confirm" onPress={() => checkOut()} />
         </View>

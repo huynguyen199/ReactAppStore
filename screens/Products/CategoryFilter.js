@@ -1,5 +1,5 @@
-import {Badge, ListItem} from 'native-base';
 import React from 'react';
+import {Badge, ListItem} from 'native-base';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ const CategoryFilter = props => {
       bounces={true}
       horizontal={true}
       style={{
-        backgroundColor: '#f2f2f2',
+        backgroundColor: 'white',
       }}>
       <ListItem style={{margin: 0, padding: 0, borderRadius: 0}}>
         <TouchableOpacity
@@ -33,10 +33,10 @@ const CategoryFilter = props => {
         </TouchableOpacity>
         {props.categories.map(item => (
           <TouchableOpacity
-            key={item._id.$oid}
+            key={item._id}
             onPress={() => {
               console.log('active', props.categories.indexOf(item));
-              props.categoryFilter(item._id.$oid),
+              props.categoryFilter(item._id),
                 props.setActive(props.categories.indexOf(item));
             }}>
             <Badge

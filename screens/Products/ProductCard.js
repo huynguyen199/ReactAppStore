@@ -11,6 +11,7 @@ import {
 import {connect} from 'react-redux';
 import * as actions from '../../Redux/Actions/cartActions';
 var {width} = Dimensions.get('window');
+import Toast from 'react-native-toast-message';
 
 const ProductCard = props => {
   console.log('props', props);
@@ -26,7 +27,7 @@ const ProductCard = props => {
             : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png',
         }}
       />
-      <View style={{marginTop: 100}} />
+      <View style={{marginTop: 140}} />
       <Text style={styles.title}>
         {name.length > 15 ? name.substring(0, 15 - 3) + '...' : name}
       </Text>
@@ -35,6 +36,12 @@ const ProductCard = props => {
         <TouchableOpacity
           onPress={() => {
             props.addItemToCart(props);
+            Toast.show({
+              topOffset: 60,
+              type: 'success',
+              text1: `${name} added to Cart`,
+              text2: 'Go to your cart to complete order',
+            });
           }}
           style={{backgroundColor: '#03bafc', padding: 5, borderRadius: 15}}>
           <Text style={{color: 'white'}}>ADD TO CART</Text>

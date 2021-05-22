@@ -12,6 +12,7 @@ import {
   Icon,
   Body,
   Title,
+  Form,
 } from 'native-base';
 
 const methods = [
@@ -55,9 +56,23 @@ const Payment = props => {
             </ListItem>
           );
         })}
-        {/* {selected == 3 ? (
+        {selected == 3 ? (
           <Picker
-            mode="dropdown" */}
+            mode="dropdown"
+            style={{height: 40, marginLeft: 10}}
+            selectedValue={card}
+            onValueChange={x => setCard(x)}>
+            {paymentCards.map((c, index) => {
+              return <Picker.Item key={c.name} label={c.name} value={c.name} />;
+            })}
+          </Picker>
+        ) : null}
+        <View style={{marginTop: 60, alignSelf: 'center'}}>
+          <Button
+            title={'Confirm'}
+            onPress={() => props.navigation.navigate('Confirm', {order})}
+          />
+        </View>
       </Content>
     </Container>
   );

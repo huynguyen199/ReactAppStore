@@ -1,5 +1,5 @@
 import {Container, Footer, H1, Left, Right} from 'native-base';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   View,
@@ -9,11 +9,31 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import TrafficLight from '../../Shared/Form/TrafficLight';
 
 const SingleProduct = props => {
   const [item, setItem] = useState(props.route.params.item);
   const [availability, setAvailability] = useState(null);
   const [availabilityText, setAvailabilityText] = useState('');
+
+  useEffect(() => {
+    if (props.route.params.item.countInStock == 0) {
+      setAvailability(<TrafficLight unavailable></TrafficLight>);
+      setAvailabilityText('Unvailable');
+    } else if (props.route.params.item.countInStock <= 5) {
+      setAvailability(<TrafficLight limited></TrafficLight>);
+      setAvailabilityText('Limited Stock');
+    } else {
+      setAvailability(<TrafficLight available></TrafficLight>);
+      setAvailabilityText('Available');
+    }
+
+    return () => {
+      setAvailability(null);
+      setAvailabilityText('');
+    };
+  }, []);
+
   return (
     <Container style={styles.container}>
       <ScrollView>
@@ -31,6 +51,16 @@ const SingleProduct = props => {
         <View style={styles.contentContainer}>
           <H1 style={styles.contentHeader}>{item.name}</H1>
           <Text style={styles.contentText}>{item.brand}</Text>
+        </View>
+
+        <View style={styles.availabilityContainer}>
+          <View style={styles.availability}>
+            <Text style={{marginRight: 10}}>
+              Availability: {availabilityText}
+            </Text>
+            {availability}
+          </View>
+          <Text>{item.description}</Text>
         </View>
       </ScrollView>
       <Footer
@@ -94,6 +124,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     backgroundColor: 'white',
+  },
+  availabilityContainer: {
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  availability: {
+    flexDirection: 'row',
+    marginBottom: 10,
   },
 });
 

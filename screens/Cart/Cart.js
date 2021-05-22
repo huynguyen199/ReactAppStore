@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   View,
   Dimensions,
@@ -24,10 +24,15 @@ import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as actions from '../../Redux/Actions/cartActions';
 import CartItem from './CartItem';
-
+import AuthGlobal from '../../Context/store/AuthGlobal';
+import EasyButton from '../../Shared/StyledComponents/EasyButton';
+import Login from '../User/Login';
 var {width, height} = Dimensions.get('window');
 
 const Cart = props => {
+  console.log('🚀 ~ file: Cart.js ~ line 32 ~ props', props);
+
+  const context = useContext(AuthGlobal);
   var total = 0;
   const data = props.cartItems;
 
@@ -79,10 +84,21 @@ const Cart = props => {
               <Button title="Clear" onPress={() => props.clearCart()} />
             </Right>
             <Right>
-              <Button
-                title="Checkout"
-                onPress={() => props.navigation.navigate('CheckOut')}
-              />
+              {context.stateUser.isAuthenticated ? (
+                <EasyButton
+                  primary
+                  medium
+                  onPress={() => props.navigation.navigate('CheckOut')}>
+                  <Text style={{color: 'white'}}>Checkout</Text>
+                </EasyButton>
+              ) : (
+                <EasyButton
+                  secondary
+                  medium
+                  onPress={() => props.navigation.navigate('User')}>
+                  <Text style={{color: 'white'}}>Login</Text>
+                </EasyButton>
+              )}
             </Right>
           </View>
         </View>
